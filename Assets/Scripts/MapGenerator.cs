@@ -9,11 +9,11 @@ public class MapGenerator : MonoBehaviour
 {
 
     public GameObject[] spritemap;
-    int[,] mappy;
+    public int[,] mappy;
     public int maxMapX;
     public int maxMapY;
     public CharBehavior lien;
-    public EnemyBehavior burt;
+    public EnemyBehavior[] burt;
     public int lvl;
 
     public int startx;
@@ -67,6 +67,7 @@ public class MapGenerator : MonoBehaviour
             if (lien.cooldown > 0)
             {
                 lien.cooldown--;
+                StartCoroutine(Bleh());
             }
             else
             {
@@ -77,12 +78,16 @@ public class MapGenerator : MonoBehaviour
                     {
                         lien.energy++;
                         Debug.Log("Added Energy" + lien.energy);
+                        lien.canMove = false;
+                        StartCoroutine(Bleh());
                     }
                     else if (dist == 1)
                     {
                         lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
                         lien.x = x;
                         lien.y = y;
+                        lien.canMove = false;
+                        StartCoroutine(Bleh());
                     }
                     else if (dist > 1 && dist - 1 <= lien.energy)
                     {
@@ -93,7 +98,8 @@ public class MapGenerator : MonoBehaviour
                         lien.energy -= DistanceFromPlayer(x, y) - 1;
                         lien.x = x;
                         lien.y = y;
-
+                        lien.canMove = false;
+                        StartCoroutine(Bleh());
                     }
                     if (mappy[x, y] == 2)
                     {
@@ -101,51 +107,22 @@ public class MapGenerator : MonoBehaviour
                     }
                 }
             }
-            lien.canMove = false;
-            StartCoroutine(bleh());
         }
     }
 
-    IEnumerator bleh()
+    IEnumerator Bleh()
     {
         yield return new WaitForSeconds(0.3F);
-        MoveEnemy();
+        for(int i = 0; i < burt.Length; i++)
+        {
+            burt[i].MoveIt();
+        }
+        lien.canMove = true;
     }
 
     int DistanceFromPlayer(int x, int y)
     {
         return (int)Mathf.Abs(lien.x - x) + (int)Mathf.Abs(lien.y - y);
-    }
-
-    void MoveEnemy()
-    {
-        int x = burt.x;
-        int y = burt.y;
-        if(x != maxMapX-1 && mappy[x+1,y] == 0 && burt.lastmove != 2)
-        {
-            burt.x++;
-            burt.transform.SetPositionAndRotation(new Vector3(x+1, y, 0), Quaternion.identity);
-            burt.lastmove = 0;
-        } else if(y != maxMapY-1 && mappy[x,y+1] == 0 && burt.lastmove != 3)
-        {
-            burt.y++;
-            burt.transform.SetPositionAndRotation(new Vector3(x, y + 1, 0), Quaternion.identity);
-            burt.lastmove = 1;
-        } else if(x != 0 && mappy[x-1, y] == 0  && burt.lastmove != 0)
-        {
-            burt.x--;
-            burt.transform.SetPositionAndRotation(new Vector3(x - 1, y, 0), Quaternion.identity);
-            burt.lastmove = 2;
-        } else if(y != 0 && mappy[x,y-1] == 0 && burt.lastmove != 1)
-        {
-            burt.y--;
-            burt.transform.SetPositionAndRotation(new Vector3(x, y - 1, 0), Quaternion.identity);
-            burt.lastmove = 3;
-        } else
-        {
-            burt.lastmove = 4;
-        }
-        lien.canMove = true;
     }
 
     // Update is called once per frame
