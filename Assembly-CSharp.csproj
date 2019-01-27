@@ -81,7 +81,9 @@
     <Compile Include="Assets\Scripts\KeyCardsScr.cs" />
     <Compile Include="Assets\Scripts\KeyGateScript.cs" />
     <Compile Include="Assets\Scripts\MapGenerator.cs" />
+    <None Include="Assets\LevelData\lvl3.txt" />
     <None Include="Assets\LevelData\lvl1.txt" />
+    <None Include="Assets\LevelData\lvl4.txt" />
     <None Include="Assets\LevelData\lvl2.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/William/Desktop/Zoo51/Zoo 51/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -154,9 +155,20 @@ public class MapGenerator : MonoBehaviour
                     if (mappy[x, y] == 2)
                     {
                         //Exit Procedure
+                        //**********
+                        //*
+                        //********
+                        //*
+                        //***********
                     }
                 }
             }
+        }
+        //** THIS IS THE GAME OVER SECTION */
+        if ((burt != null && lien.x == burt.x && lien.y == burt.y) ||
+                (roburt != null && lien.x == roburt.x && lien.y == roburt.y))
+        {
+            StartCoroutine(Failed());
         }
     }
 
@@ -191,6 +203,13 @@ public class MapGenerator : MonoBehaviour
         return true;
     }
 
+    /** THIS IS ALSO PART OF THE GAME OVER SECTION */
+    IEnumerator Failed() {
+        yield return new WaitForSeconds(0.5f);
+        //ADD PLAY MUSIC
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
     IEnumerator Bleh()
     {
         yield return new WaitForSeconds(0.3F);
@@ -205,6 +224,12 @@ public class MapGenerator : MonoBehaviour
         for(int i = 0; i < keys.Length; i++)
         {
             keys[i].CheckForPick();
+        }
+        //** THIS IS THE GAME OVER SECTION */
+        if ((burt != null && lien.x == burt.x && lien.y == burt.y) ||
+                (roburt != null && lien.x == roburt.x && lien.y == roburt.y))
+        {
+            StartCoroutine(Failed());
         }
         lien.canMove = true;
     }
