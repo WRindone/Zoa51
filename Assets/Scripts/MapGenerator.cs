@@ -7,38 +7,55 @@ using System.Collections;
 
 public class MapGenerator : MonoBehaviour
 {
-
+    //Holds the sprites for the sprite map
     public GameObject[] spritemap;
+    //The map as a double int array
     public int[,] mappy;
+    //Map size
     public int maxMapX;
     public int maxMapY;
+    //Script controlling lien
     public CharBehavior lien;
+    //Script controlling burt
     public EnemyBehavior burt;
+    //Script controlling roburt
     public AnotherOne roburt;
+    //Level# (Calls the lvl from the lvlx.txt)
     public int lvl;
 
+    //Starting location of lien
     public int startx;
     public int starty;
 
+    //Determines whether it's lien's turn or the enemies
     public bool turn = true;
 
-    public KeyCardsScr[] butts;
-    public KeyGateScript[] farts;
+    //Array of KeyCards
+    public KeyCardsScr[] keys;
+    //Array of Gates
+    public KeyGateScript[] gates;
 
+    //Called on StartUp
     void Start()
     {
+            //Generates MapData
             GenerateMapData();
             GenerateMapVisual();
     }
 
+    //Generate Map Data
     void GenerateMapData()
     {
+        //Sets lien's position, and draws him
         lien.x = startx;
         lien.y = starty;
         lien.transform.SetPositionAndRotation(new Vector3(startx, starty, 0), Quaternion.identity);
+        //Accepts level data
         string pathForReader = "Assets/LevelData/lvl" + lvl + ".txt";
         StreamReader reader = new StreamReader(pathForReader);
+        //Sets up the map as a double array based on map size
         mappy = new int[maxMapX, maxMapY];
+        //Reads from the txt file and converts to a level
         for(int y = maxMapY-1; y >=0; y--)
         {
             string line;
@@ -48,9 +65,11 @@ public class MapGenerator : MonoBehaviour
                 string thing = line.Substring(3 * x, 2);
                 int cheap = (int) float.Parse(thing);
                 mappy[x, y] = cheap;
-                for (int i = farts.Length-1; i >= 0; i--)
+                for (int i = 0; i < gates.Length; i++)
                 {
-                    if ((int)farts[i].position.x == x && (int)farts[i].position.y == y)
+                    //Changes the tiles of gates (regardless of what was underneath them)
+                    //To a wall tile
+                    if ((int)gates[i].position.x == x && (int)gates[i].position.y == y)
                     {
                         mappy[x, y] = 1;
                     }
@@ -59,6 +78,12 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    //Takes the data from mappy and generates the terrain based on the sprite
+    //(The majority of the levels (and the rest of this code)
+    //work under this assumption:
+    //0 = Floor
+    //1 = Wall
+    //2 = Exit
     void GenerateMapVisual()
     {
         for(int x = 0; x < maxMapX; x++)
@@ -71,49 +96,52 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    //Function that controls lien's movement
     public void tryToMove(int x, int y)
     {
+        //If it's lien's turn
         if (lien.canMove)
         {
+            //if his cooldown is active, does not allow him to move,
+            //But allows enemies to move
             if (lien.cooldown > 0)
             {
                 lien.cooldown--;
                 StartCoroutine(Bleh());
             }
+            //Otherwise
             else
             {
+                //If it is a walkable tile...
                 if (mappy[x, y] == 0 || mappy[x,y] == 2)
                 {
-                    bool canMove = true;
-                    for(var i = farts.Length-1; i >= 0; i--)
+                    //Calculate dist from player
+                    int dist = DistanceFromPlayer(x, y);
+                    //if the player's position is clicked, counts as a wait
+                    //Increases energy if energy < 5
+                    if (dist == 0 && lien.energy < 5)
                     {
-                        if (x == (int)farts[i].position.x && y == (int)farts[i].position.y && farts[i].isActiveAndEnabled)
-                        {
-                            canMove = false;
-                        }
+                        lien.energy++;
+                        //Switch turns, burts' move
+                        lien.canMove = false;
+                        StartCoroutine(Bleh());
                     }
-                    if (canMove == true)
+                    //Otherwise, if the spot is one away from lien
+                    else if (dist == 1)
                     {
-                        int dist = DistanceFromPlayer(x, y);
-                        if (dist == 0 && lien.energy < 5)
+                        //Draw and set lien to new position
+                        lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
+                        lien.x = x;
+                        lien.y = y;
+                        //Switch turns, burts' move
+                        lien.canMove = false;
+                        StartCoroutine(Bleh());
+                    }
+                    //Dash mechanic
+                    else if (dist > 1 && dist - 1 <= lien.energy)
+                    {
+                        if(testPath(lien.x,lien.y,x,y))
                         {
-                            lien.energy++;
-                            Debug.Log("Added Energy" + lien.energy);
-                            lien.canMove = false;
-                            StartCoroutine(Bleh());
-                        }
-                        else if (dist == 1)
-                        {
-                            lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
-                            lien.x = x;
-                            lien.y = y;
-                            lien.canMove = false;
-                            StartCoroutine(Bleh());
-                        }
-                        else if (dist > 1 && dist - 1 <= lien.energy)
-                        {
-                            //if (testPath(lien.x, lien.y, x, y, dist))
-
                             lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
                             lien.cooldown = DistanceFromPlayer(x, y) - 1;
                             lien.energy -= DistanceFromPlayer(x, y) - 1;
@@ -122,15 +150,45 @@ public class MapGenerator : MonoBehaviour
                             lien.canMove = false;
                             StartCoroutine(Bleh());
                         }
-                        if (mappy[x, y] == 2)
-                        {
-                            //Exit Procedure
-                        }
                     }
-                    
+                    if (mappy[x, y] == 2)
+                    {
+                        //Exit Procedure
+                    }
                 }
             }
         }
+    }
+
+    bool testPath(int lx, int ly, int x, int y)
+    {
+        int dx = lien.x - x;
+        int dy = lien.y - y;
+        if(dx == 0)
+        {
+            int direction = -(int)Mathf.Sign(dy);
+            dy = (int)Mathf.Abs(dy);
+            Debug.Log(dy + " " + direction + " " + (ly + dy));
+            for (int i = ly; i >= ly - dy && i <= ly + dy; i += direction)
+            {
+                if(mappy[x,i] == 1)
+                {
+                    return false;
+                }
+            }
+        } else if(dy == 0)
+        {
+            int direction = -(int)Mathf.Sign(dx);
+            dx = (int)Mathf.Abs(dx);
+            for (int i = lx; i >= lx - dx && i <= lx + dx; i += direction)
+            {
+                if (mappy[i, y] == 1)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     IEnumerator Bleh()
@@ -144,9 +202,9 @@ public class MapGenerator : MonoBehaviour
         {
             roburt.MoveIt();
         }
-        for(int i = 0; i < butts.Length; i++)
+        for(int i = 0; i < keys.Length; i++)
         {
-            butts[i].CheckForPick();
+            keys[i].CheckForPick();
         }
         lien.canMove = true;
     }

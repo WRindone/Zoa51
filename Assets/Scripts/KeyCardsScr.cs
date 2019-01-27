@@ -22,14 +22,14 @@ public class KeyCardsScr : MonoBehaviour
         {
             g.lien.keycards[color] = true;
             gameObject.SetActive(false);
-            for (int i = g.farts.Length-1; i >= 0 ; i--)
+            for (int i = g.gates.Length-1; i >= 0 ; i--)
             {
-                if (g.farts[i].color == color)
+                if (g.gates[i].color == color)
                 {
-                    int x = (int) g.farts[i].position.x;
-                    int y = (int)g.farts[i].position.y;
+                    int x = (int) g.gates[i].position.x;
+                    int y = (int)g.gates[i].position.y;
                     g.mappy[x, y] = 0;
-                    g.farts[i].gameObject.SetActive(false);
+                    g.gates[i].gameObject.SetActive(false);
                     Instantiate(g.spritemap[0], new Vector3(x, y, 0), Quaternion.identity);
                 }
             }

@@ -145,7 +145,6 @@ MonoBehaviour:
   x: 6
   y: 6
   direction: 1
-  keys: []
   g: {fileID: 439822806}
 --- !u!212 &17052875
 SpriteRenderer:
@@ -467,9 +466,9 @@ MonoBehaviour:
   startx: 0
   starty: 9
   turn: 1
-  butts:
+  keys:
   - {fileID: 1041740451}
-  farts:
+  gates:
   - {fileID: 90037194}
 --- !u!212 &439822807
 SpriteRenderer:
