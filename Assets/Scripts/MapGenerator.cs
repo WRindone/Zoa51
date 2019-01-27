@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class MapGenerator : MonoBehaviour
 {
+    public LevelManager levelOrganizer;
+
     //Holds the sprites for the sprite map
     public GameObject[] spritemap;
     //The map as a double int array
@@ -17,10 +19,6 @@ public class MapGenerator : MonoBehaviour
     public int maxMapY;
     //Script controlling lien
     public CharBehavior lien;
-    //Script controlling burt
-    public EnemyBehavior burt;
-    //Script controlling roburt
-    public AnotherOne roburt;
     //Level# (Calls the lvl from the lvlx.txt)
     public int lvl;
 
@@ -35,6 +33,10 @@ public class MapGenerator : MonoBehaviour
     public KeyCardsScr[] keys;
     //Array of Gates
     public KeyGateScript[] gates;
+    //Array of Burts
+    public AnotherOne[] roburts;
+    //Array of Roburts
+    public EnemyBehavior[] burts;
 
     //Called on StartUp
     void Start()
@@ -113,8 +115,8 @@ public class MapGenerator : MonoBehaviour
             //Otherwise
             else
             {
-                //If it is a walkable tile...
-                if (mappy[x, y] == 0 || mappy[x,y] == 2)
+                //If it is a walkable tile and on the same x or y...
+                if (mappy[x, y] == 0 && (x == lien.x || y == lien.y) || mappy[x,y] == 2 && (x == lien.x || y == lien.y))
                 {
                     //Calculate dist from player
                     int dist = DistanceFromPlayer(x, y);
@@ -138,7 +140,7 @@ public class MapGenerator : MonoBehaviour
                         lien.canMove = false;
                         StartCoroutine(Bleh());
                     }
-                    //Dash mechanic
+                    //Dash mechanicfw
                     else if (dist > 1 && dist - 1 <= lien.energy)
                     {
                         if(testPath(lien.x,lien.y,x,y))
@@ -154,21 +156,25 @@ public class MapGenerator : MonoBehaviour
                     }
                     if (mappy[x, y] == 2)
                     {
-                        //Exit Procedure
-                        //**********
-                        //*
-                        //********
-                        //*
-                        //***********
+                        levelOrganizer.StageCleared();
                     }
                 }
             }
         }
         //** THIS IS THE GAME OVER SECTION */
-        if ((burt != null && lien.x == burt.x && lien.y == burt.y) ||
-                (roburt != null && lien.x == roburt.x && lien.y == roburt.y))
+        for (int i = burts.Length - 1; i >= 0; i--)
         {
-            StartCoroutine(Failed());
+            if (burts[i] != null && lien.x == burts[i].x && lien.y == burts[i].y)
+                {
+                StartCoroutine(Failed());
+            }
+        }
+        for (int b = roburts.Length - 1; b >= 0; b--)
+        {
+            if (roburts[b] != null && lien.x == roburts[b].x && lien.y == roburts[b].y)
+            {
+                StartCoroutine(Failed());
+            }
         }
     }
 
@@ -207,29 +213,39 @@ public class MapGenerator : MonoBehaviour
     IEnumerator Failed() {
         yield return new WaitForSeconds(0.5f);
         //ADD PLAY MUSIC
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        levelOrganizer.Caught();
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     IEnumerator Bleh()
     {
         yield return new WaitForSeconds(0.3F);
-        if(burt != null)
+        for (int i = burts.Length-1; i >= 0; i--)
         {
-            burt.MoveIt();
+            burts[i].MoveIt();
         }
-        if(roburt != null)
+        for (int b = roburts.Length-1; b >= 0; b--)
         {
-            roburt.MoveIt();
+            roburts[b].MoveIt();
         }
         for(int i = 0; i < keys.Length; i++)
         {
             keys[i].CheckForPick();
         }
         //** THIS IS THE GAME OVER SECTION */
-        if ((burt != null && lien.x == burt.x && lien.y == burt.y) ||
-                (roburt != null && lien.x == roburt.x && lien.y == roburt.y))
+        for (int i = burts.Length - 1; i >= 0; i--)
         {
-            StartCoroutine(Failed());
+            if (burts[i] != null && lien.x == burts[i].x && lien.y == burts[i].y)
+                {
+                    StartCoroutine(Failed());
+                }
+        }
+        for (int b = roburts.Length - 1; b >= 0; b--)
+        {
+            if (roburts[b] != null && lien.x == roburts[b].x && lien.y == roburts[b].y)
+            {
+                StartCoroutine(Failed());
+            }
         }
         lien.canMove = true;
     }

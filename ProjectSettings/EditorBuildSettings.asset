@@ -9,6 +9,27 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
+    path: Assets/Scenes/TitleMenu.unity
+    guid: 2d2f60d46c629054cbdcf04caecddb70
+  - enabled: 0
     path: Assets/RPG_BOX_Free/Resources/Attributes/Scenes/SampleScene.unity
     guid: a23647d486bf47649adca7129e8159cf
+  - enabled: 1
+    path: Assets/Scenes/Level2.unity
+    guid: 231cb49def203824080e26bcfab7fae3
+  - enabled: 1
+    path: Assets/Scenes/Level3.unity
+    guid: c3bf8a6fd0c10834a819703aad65e16e
+  - enabled: 1
+    path: Assets/Scenes/Level4.unity
+    guid: 8d1f7654eb3497340a2317264aa90896
+  - enabled: 1
+    path: Assets/Scenes/Level5.unity
+    guid: dd093245b044b9545869e2b68ab1a855
+  - enabled: 1
+    path: Assets/Scenes/CreditsMenu.unity
+    guid: 4a2c7ded3ff95c04e9f00f9be8be5a44
+  - enabled: 1
+    path: Assets/Scenes/Level6.unity
+    guid: 9ff5c315f6b1c3948848e7e3a4dee226
   m_configObjects: {}
