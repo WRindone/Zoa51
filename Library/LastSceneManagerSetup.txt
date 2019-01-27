@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/RPG_BOX_Free/Resources/Attributes/Scenes/SampleScene.unity
+- path: Assets/Level2.unity
   isLoaded: 1
   isActive: 1

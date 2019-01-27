@@ -23,6 +23,7 @@ public class MapGenerator : MonoBehaviour
     public bool turn = true;
 
     public KeyCardsScr[] butts;
+    public KeyGateScript[] farts;
 
     void Start()
     {
@@ -47,6 +48,13 @@ public class MapGenerator : MonoBehaviour
                 string thing = line.Substring(3 * x, 2);
                 int cheap = (int) float.Parse(thing);
                 mappy[x, y] = cheap;
+                for (int i = farts.Length-1; i >= 0; i--)
+                {
+                    if ((int)farts[i].position.x == x && (int)farts[i].position.y == y)
+                    {
+                        mappy[x, y] = 1;
+                    }
+                }
             }
         }
     }
@@ -76,38 +84,50 @@ public class MapGenerator : MonoBehaviour
             {
                 if (mappy[x, y] == 0 || mappy[x,y] == 2)
                 {
-                    int dist = DistanceFromPlayer(x, y);
-                    if (dist == 0 && lien.energy < 5)
+                    bool canMove = true;
+                    for(var i = farts.Length-1; i >= 0; i--)
                     {
-                        lien.energy++;
-                        Debug.Log("Added Energy" + lien.energy);
-                        lien.canMove = false;
-                        StartCoroutine(Bleh());
+                        if (x == (int)farts[i].position.x && y == (int)farts[i].position.y && farts[i].isActiveAndEnabled)
+                        {
+                            canMove = false;
+                        }
                     }
-                    else if (dist == 1)
+                    if (canMove == true)
                     {
-                        lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
-                        lien.x = x;
-                        lien.y = y;
-                        lien.canMove = false;
-                        StartCoroutine(Bleh());
-                    }
-                    else if (dist > 1 && dist - 1 <= lien.energy)
-                    {
-                        //if (testPath(lien.x, lien.y, x, y, dist))
+                        int dist = DistanceFromPlayer(x, y);
+                        if (dist == 0 && lien.energy < 5)
+                        {
+                            lien.energy++;
+                            Debug.Log("Added Energy" + lien.energy);
+                            lien.canMove = false;
+                            StartCoroutine(Bleh());
+                        }
+                        else if (dist == 1)
+                        {
+                            lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
+                            lien.x = x;
+                            lien.y = y;
+                            lien.canMove = false;
+                            StartCoroutine(Bleh());
+                        }
+                        else if (dist > 1 && dist - 1 <= lien.energy)
+                        {
+                            //if (testPath(lien.x, lien.y, x, y, dist))
 
-                        lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
-                        lien.cooldown = DistanceFromPlayer(x, y) - 1;
-                        lien.energy -= DistanceFromPlayer(x, y) - 1;
-                        lien.x = x;
-                        lien.y = y;
-                        lien.canMove = false;
-                        StartCoroutine(Bleh());
+                            lien.transform.SetPositionAndRotation(new Vector3(x, y, 0), Quaternion.identity);
+                            lien.cooldown = DistanceFromPlayer(x, y) - 1;
+                            lien.energy -= DistanceFromPlayer(x, y) - 1;
+                            lien.x = x;
+                            lien.y = y;
+                            lien.canMove = false;
+                            StartCoroutine(Bleh());
+                        }
+                        if (mappy[x, y] == 2)
+                        {
+                            //Exit Procedure
+                        }
                     }
-                    if (mappy[x, y] == 2)
-                    {
-                        //Exit Procedure
-                    }
+                    
                 }
             }
         }
