@@ -7,7 +7,6 @@ public class EnemyBehavior : MonoBehaviour
     public int x;
     public int y;
     public int lastmove;
-    bool cheatskate = false;
 
     [SerializeField]
     private MapGenerator g;

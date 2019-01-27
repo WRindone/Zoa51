@@ -74,9 +74,11 @@
     <Compile Include="Assets\RPG_BOX_Free\Scripts\ScriptablObjects\Attribute.cs" />
     <Compile Include="Assets\RPG_BOX_Free\Scripts\ScriptablObjects\Item.cs" />
     <Compile Include="Assets\RPG_BOX_Free\Scripts\ScriptablObjects\LootTable.cs" />
+    <Compile Include="Assets\Scripts\AnotherOne.cs" />
     <Compile Include="Assets\Scripts\CharBehavior.cs" />
     <Compile Include="Assets\Scripts\ClickableSpace.cs" />
     <Compile Include="Assets\Scripts\EnemyBehavior.cs" />
+    <Compile Include="Assets\Scripts\KeyCardsScr.cs" />
     <Compile Include="Assets\Scripts\MapGenerator.cs" />
     <None Include="Assets\LevelData\lvl1.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">

@@ -13,13 +13,16 @@ public class MapGenerator : MonoBehaviour
     public int maxMapX;
     public int maxMapY;
     public CharBehavior lien;
-    public EnemyBehavior[] burt;
+    public EnemyBehavior burt;
+    public AnotherOne roburt;
     public int lvl;
 
     public int startx;
     public int starty;
 
     public bool turn = true;
+
+    public KeyCardsScr[] butts;
 
     void Start()
     {
@@ -71,7 +74,7 @@ public class MapGenerator : MonoBehaviour
             }
             else
             {
-                if (mappy[x, y] == 0 || mappy[x, y] == 2)
+                if (mappy[x, y] == 0 || mappy[x,y] == 2)
                 {
                     int dist = DistanceFromPlayer(x, y);
                     if (dist == 0 && lien.energy < 5)
@@ -113,9 +116,17 @@ public class MapGenerator : MonoBehaviour
     IEnumerator Bleh()
     {
         yield return new WaitForSeconds(0.3F);
-        for(int i = 0; i < burt.Length; i++)
+        if(burt != null)
         {
-            burt[i].MoveIt();
+            burt.MoveIt();
+        }
+        if(roburt != null)
+        {
+            roburt.MoveIt();
+        }
+        for(int i = 0; i < butts.Length; i++)
+        {
+            butts[i].CheckForPick();
         }
         lien.canMove = true;
     }
